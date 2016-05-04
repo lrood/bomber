@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bomber</title>
+    <style>
+        body {background-color:lightblue;}
+        canvas {margin:auto; display:block;}
+        #fire { font-size:50px; background-color:red;}
+        #reset { font-size:50px; background-color:lightblue;}
+        #format_buttons {float:right; margin-right:20%}
+    </style>
+</head>
+<body>
+    <canvas id="sky" width="1000" height="700"></canvas><br>
+    <div id="format_buttons">
+    <input id="reset" value="Clear" type="button">&nbsp&nbsp
+    <input id="fire" value="Fire" type="button">
+    </div>
+    <script>
+        
+        // Here are the global variables
+        var canvas = document.getElementById("sky");
+        var ctx = canvas.getContext("2d");
+        var planeimg = new Image;
+        var jeepimg = new Image;
+        var bombimg = new Image;
+        var planex = -100;
+        var jeepx = -100;
+        var bombx = 0;
+        var bomby = 1050;
+        var hits = 0;
+        var shots = 10;
+        var speed = 2;
+        var count = 0;
+        
+        // These two statements attach the action listeners to the fire and clear buttons
+        document.getElementById("fire").addEventListener("click",dropBomb,false);
+        document.getElementById("reset").addEventListener("click",clearScore,false);
+        
+        // These two statements import the images for the game.
+        planeimg.src="imgs/plane.png";
+        bombimg.src="imgs/bomb.png";
+        jeepimg.src="imgs/jeep.png";
+        
+        // This variable holds the animation timer
+        var animateBomber = setInterval(function(){bomber();},30);
+        
+        // This function paints the canvas every 30 ms 
+        function bomber()
+        {
+            ctx.fillStyle = "white";
+            ctx.fillRect (0,0,1000,700);
+            ctx.drawImage (planeimg,planex,50,100,100);
+            ctx.drawImage (jeepimg,jeepx,600,100,100);
+            ctx.drawImage (bombimg,bombx,bomby,40,40);
+            ctx.fillStyle = "black";
+            ctx.font = "50px Arial";
+            ctx.fillStyle = "blue";
+            ctx.fillText ("Shots Left:", 475,50);
+            ctx.fillText (shots, 725,50);
+            ctx.fillStyle = "red";
+            ctx.fillText ("Hits:", 825,50);
+            ctx.fillText (hits, 925,50);
+            ctx.fillStyle = "green"
+            ctx.fillText ("Jeep Speed:", 50,50);
+            ctx.fillText (speed + "0", 350,50);
+            ctx.fillStyle = "brown";
+            ctx.fillRect (0,685,1000,25);
+            
+            
+            // These three variable hold the speeds of the plane, jeep, and bomb
+            jeepx += speed;
+            planex += 10;
+            bomby += 12;
+            
+            // These control structures reset the position variables when the objects leave the canvas
+            if (planex > 1100)
+            {
+                planex = -100;   
+            }
+            if (jeepx > 1050)
+            {
+                jeepx = -100;
+            }
+            if (bomby > 800)
+            {
+                fire.disabled = false;
+            }
+            
+            // This algorithm is used to detect a collision
+            if (bombx < (jeepx + 80) && bombx > (jeepx - 20) && bomby > 580 && bomby < 620)
+            {
+                ctx.fillStyle = "red";
+                ctx.fillRect(0,0,1000,1000);
+                hits +=1;
+                bomby = 625;
+            }
+            
+            // This control structure shows the game over sign
+            if (shots == 0)
+            {
+                ctx.fillStyle = "red";
+                ctx.font = "50px Arial";
+                ctx.fillText ("Game Over", 400,300);
+                fire.disabled = "true";
+            }
+            
+            // The speed of the jeep will randomly change after 4 shots
+            if (shots < 7)
+            {
+                if (count == 100)
+                {
+                    count = 0;
+                    speed = Math.floor((Math.random() * 6) + 1);
+                }
+                
+                count += 1;   
+            }
+        }
+        
+        // The bomb drop is attached to the fire button action listener
+        function dropBomb()
+        {
+            fire.disabled = true;
+            bombx = planex;
+            bomby = 100;
+            shots -= 1;
+        }
+        
+        // The score and variables will clear when you push the clear button
+        function clearScore()
+        {
+            shots = 10;
+            hits = 0;
+            speed = 2;
+        }
+         
+    </script>
+</body>
+</html>
